@@ -56,6 +56,5 @@ export default {
   height: 100%;
   background: url('../../assets/spotlightLogo2.svg');
   background-repeat: no-repeat;
-
 }
 </style>
