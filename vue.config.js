@@ -6,15 +6,15 @@ module.exports = {
   devServer: {
     proxy: {
       '/api/group/v1': {
-         target: 'http://localhost:8082',
+         target: 'http://localhost:8081',
          changeOrigin: true
        },
        '/api/application/v1': {
-         target: 'http://localhost:8082',
+         target: 'http://localhost:8081',
          changeOrigin: true
        },
        '/api/endpoint/v1': {
-         target: 'http://localhost:8082',
+         target: 'http://localhost:8081',
          changeOrigin: true
        }
     }
