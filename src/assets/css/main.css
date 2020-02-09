@@ -195,12 +195,15 @@
   position: relative;
   min-height: 25px;
   width: 100%;
+  overflow: hidden;
   box-sizing: border-box;
   padding: 8px;
   padding-left: 20px;
   border-radius: 3px;
   border: 2px solid rgba(0,0,0,0.24);
   background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0.0));
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 .inline-block {
   display: inline-block;

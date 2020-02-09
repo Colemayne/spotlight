@@ -36,7 +36,7 @@
             <p>Description</p>
           </div>
           <div class="right-split">
-            <pre v-if="endpoint.endpointDescription">{{ endpoint.endpointDescription }}</pre>
+            <p v-if="endpoint.endpointDescription">{{ endpoint.endpointDescription }}</p>
           </div>
         </div>
         <div class="view-kv-split" v-if="endpoint.endpointAuthRequired">
@@ -80,7 +80,7 @@
           </div>
           <div class="right-split">
             <div class="codeBlock">
-              <pre>{{ endpoint.endpointExampleBody }}</pre>
+              <p>{{ endpoint.endpointExampleBody }}</p>
             </div>
           </div>
         </div>
@@ -90,7 +90,7 @@
           </div>
           <div class="right-split">
             <div class="codeBlock">
-              <pre>{{ endpoint.endpointExpectation }}</pre>
+              <p>{{ endpoint.endpointExpectation }}</p>
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@
             <p>Notes</p>
           </div>
           <div class="right-split">
-              <pre>{{ endpoint.endpointNotes}}</pre>
+              <p>{{ endpoint.endpointNotes}}</p>
           </div>
         </div>
         <div style="height:30px;" />
@@ -174,7 +174,7 @@ export default {
   padding-left: 40px;
   padding-right: 40px;
   margin-bottom: 30px;
-  border-radius: 0px 50px 50px 0px;
+  border-radius: 0px 15px 15px 0px;
   box-shadow: inset 0 0 5px rgba(0,0,0,0.07);
 }
 .view-card-color {
@@ -209,5 +209,9 @@ export default {
 .right-split p {
   font-size: 18px;
   font-weight: auto;
+}
+.right-split pre {
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 </style>

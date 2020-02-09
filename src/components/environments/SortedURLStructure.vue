@@ -3,7 +3,7 @@
     <span v-for="environment in allEnvironments">
       <p style="margin-bottom:0px;"><span style="font-weight:bold">{{ environment.environmentName }}</span>
          <v-icon>mdi-chevron-right</v-icon>
-         <span class="font-weight-light">{{ environment.environmentAddress }}<span v-if="environment.environmentProxy !== 1">:{{ port }}</span>{{ endpointURL }}</span>
+         <span class="font-weight-light" style="word-break:break-word;white-space:pre-wrap;">{{ environment.environmentAddress }}<span v-if="environment.environmentProxy !== 1">:{{ port }}</span>{{ endpointURL }}</span>
       </p>
     </span>
   </div>

@@ -2,12 +2,15 @@
   <div class="nav-container">
     <v-icon color="white">mdi-train</v-icon>
     <span>
-      <router-link v-for="button in buttons" class="n-menu-button" style="color:white" :to="button.to" tag="button" :key="button.name">
+      <v-btn v-for="button in buttons" text class="n-menu-button"
+             :class="mode === button.name ? 'n-menu-button-pressed':''"
+             style="color:white" @click="gotoLink(button.to, button.name)"
+             :key="button.name">
         {{ button.name }}
-      </router-link>
+      </v-btn>
     </span>
-    <button class="n-menu-button" style="color:white">{{ getName() }}</button>
-    <button class="n-menu-button" style="color:white" @click="logoutApp">Logout</button>
+    <v-btn text class="n-menu-button" style="color:white">{{ getName() }}</v-btn>
+    <v-btn text class="n-menu-button" style="color:white" @click="logoutApp">Logout</v-btn>
   </div>
 </template>
 
@@ -16,11 +19,8 @@ import { logout } from '@/main.js'
 import { getUsername } from '@/main.js'
 export default {
   data: () => ({
+    mode: "Home",
     buttons: [
-      {
-        name: "Home",
-        to: "/"
-      },
       {
         name: "Teams",
         to: "/edit"
@@ -31,14 +31,35 @@ export default {
       }
     ],
   }),
+  created() {
+    this.buttonLogic();
+  },
   methods: {
     getName: function() {
       return getUsername();
     },
     logoutApp: function() {
       logout();
+    },
+    gotoLink: function(link, name) {
+      this.mode = name;
+      this.$router.push(link).catch(err => {});
+    },
+    buttonLogic: function() {
+      let route = this.$router.currentRoute.path.slice(1);
+      let routes = route.split("/");
+      if(routes[0] === "") {
+        this.mode = "Home";
+      }
+      if(routes[0] === "edit") {
+        this.mode = "Teams";
+      }
+      if(routes[0] === "documentation") {
+        this.mode = "Documentation";
+      }
+
     }
-  }
+  },
 
 }
 </script>

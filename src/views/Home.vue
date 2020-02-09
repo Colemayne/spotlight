@@ -11,6 +11,9 @@ export default {
   data:() => ({
 
   }),
+  created() {
+    this.$router.push("/edit");
+  },
 }
 </script>
 
