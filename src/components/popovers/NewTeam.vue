@@ -2,13 +2,14 @@
   <div class="popover-container">
     <div class="popover-background" @click="close"></div>
     <div class="new-team-container">
-      <h1>New Team</h1>
-      <div style="height:30px;"></div>
-      <h3>Team Name:</h3>
-      <input class="ad-input"
+      <h1><v-icon size="30">mdi-account-group</v-icon> New Team</h1>
+      <p>Upon group creation, other users will be unable to edit documentation until specified.</p>
+      <div style="height:5px;"></div>
+      <v-text-field outlined
+             label="Group Name"
              v-model="groupName">
-      </input>
-      <button class="ad-button" @click="addTeam(groupName)">Add Team</button>
+      </v-text-field>
+      <v-btn color="success" @click="addTeam(groupName)">Add Team</v-btn>
     </div>
   </div>
 </template>
@@ -38,7 +39,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
-  background: #f2f2f2;
+  background: #ffffff;
   border-radius: 3px;
   z-index: 101;
 }

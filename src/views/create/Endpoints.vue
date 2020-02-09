@@ -1,34 +1,53 @@
 <template>
   <div class="ad-container">
     <div class="ad-card" style="padding:20px 40px;">
-      <div class="grid-title" style="grid-template-columns:auto 50px 200px;">
-        <h2 class="heading-text">{{ application.applicationName }}</h2>
-        <button class="ad-button" style="height:50px;" @click="saveApplication"><v-icon>mdi-content-save</v-icon></button>
-        <button class="ad-button" style="height:50px;" @click="newEndpoint=true">Create Endpoint</button>
+      <div class="row-end-button" style="grid-template-columns: auto 100px">
+        <span>
+          <a href="/edit" class="heading-link inline-block">Teams</a>
+          <h2 class="heading-text inline-block" style="margin-right:8px;">/</h2>
+          <a :href="getTeamLink" class="heading-link inline-block">{{ team.groupName }}</a>
+          <h2 class="heading-text inline-block" style="margin-right:8px;">/</h2>
+          <h2 class="heading-text inline-block" style="margin-right:8px;">{{ application.applicationName }}</h2>
+        </span>
       </div>
-      <p>{{ application.applicationDescription }}</p>
-      <p style="display:inline-block;margin-right:25px;">What port does this application use?</p>
-      <input class="ad-input" v-model="application.applicationPort" style="width:150px;" placeholder="Port" />
-      <div style="height:30px"></div>
-      <div class="grid-title">
-        <h3 class="title-text">Environments:</h3>
-        <button class="ad-button" style="height:50px;" @click="addEnvironment"><v-icon>mdi-plus</v-icon></button>
+
+      <div class="n-content-container">
+        <div class="row-end-button" style="grid-template-columns: auto 100px 100px;grid-gap:8px;">
+          <h2 class="heading-text">{{ application.applicationName }}</h2>
+          <v-btn v-if="needSave"color="primary" @click="saveApplication">Save</v-btn>
+          <v-btn v-else disabled color="primary" @click="saveApplication">Save</v-btn>
+          <v-btn color="primary" @click="addEnvironment">Create</v-btn>
+        </div>
+        <p>{{ application.applicationDescription }}</p>
+        <v-text-field label="Port" @input="needSave=true" solo style="width:150px;" v-model="application.applicationPort" />
+        <h3>Environments</h3>
+        <div class="grid-environment" v-if="application.applicationEnvironments.length > 0" v-for="(environment,index) in sortedEnvironments">
+          <v-text-field @input="needSave=true" solo label="Name" v-model="environment.environmentName" />
+          <v-btn style="height:50px;" v-if="environment.environmentProxy === 1" @click="environment.environmentProxy = 0; needSave = true">Proxy</v-btn>
+          <v-btn style="height:50px;" v-else @click="environment.environmentProxy = 1; needSave = true">No Proxy</v-btn>
+          <v-text-field @input="needSave=true" solo v-model="environment.environmentAddress" label="Address" />
+          <v-text-field @input="needSave=true" solo v-model="environment.environmentDescription" label="Description" />
+          <v-btn style="height:47px;" @click="deleteEnvironment(environment,index)"><v-icon>mdi-delete</v-icon></v-btn>
+        </div>
+        <p v-if="application.applicationEnvironments.length === 0">Define environments for this application.</p>
+
       </div>
-      <div style="height:15px;width:100%;" />
-      <div class="grid-environment" v-if="application.applicationEnvironments.length > 0" v-for="(environment,index) in sortedEnvironments">
-        <input class="ad-input" v-model="environment.environmentName" placeholder="Name" />
-        <button class="ad-button" style="height:50px;" v-if="environment.environmentProxy === 1" @click="environment.environmentProxy = 0"><v-icon color="success" size="30">mdi-check</v-icon> Proxy</button>
-        <button class="ad-button" style="height:50px;" v-else @click="environment.environmentProxy = 1"><v-icon color="error" size="30">mdi-crop-square</v-icon> No Proxy</button>
-        <input class="ad-input" v-model="environment.environmentAddress" placeholder="Address" />
-        <input class="ad-input" v-model="environment.environmentDescription" placeholder="Description" />
-        <button class="ad-button" style="height:50px;" @click="deleteEnvironment(environment,index)"><v-icon>mdi-delete</v-icon></button>
-      </div>
-      <h3 class="title-text">Endpoints: </h3>
-      <div class="app-grid">
-        <button class="ad-button" style="height:100px;" v-for="endpoint in endpoints" @click="chooseEndpoint(endpoint.id)">
-          <p>{{ endpoint.endpointName }}</p>
+      <div class="n-content-container">
+        <div class="row-end-button" style="grid-template-columns: auto 100px;">
+          <h2 class="heading-text">Endpoints</h2>
+          <v-btn color="primary" @click="newEndpoint=true">Create</v-btn>
+        </div>
+        <p>Define the endpoints for this application.</p>
+        <button class="n-row-button" v-for="endpoint in endpoints" @click="chooseEndpoint(endpoint.id)">
+          <div class="application-button-layout" style="grid-template-columns: 75px 150px 150px auto">
+            <v-icon size="30">mdi-check-network</v-icon>
+            <p style="margin-top:15px;">{{endpoint.endpointName}}</p>
+            <p style="margin-top:15px;" v-if="endpoint.endpointMethod" >{{endpoint.endpointMethod}}</p>
+            <p style="margin-top:15px;" v-if="endpoint.endpointLocation" >{{endpoint.endpointLocation}}</p>
+          </div>
         </button>
       </div>
+
     </div>
     <!-- Popovers -->
     <NewEndpoint v-if="newEndpoint" :close="closePopover" :addEndpoint="createEndpoint"/>
@@ -36,10 +55,16 @@
 </template>
 
 <script>
+import { HeadersWithAuth } from '@/main.js'
+import { getToken } from '@/main.js'
 import NewEndpoint from '@/components/popovers/NewEndpoint';
 export default {
   data: () => ({
-    application: {},
+    team:{},
+    application: {
+      applicationEnvironments: [],
+    },
+    needSave: false,
     endpoints: [],
     newEndpoint: false,
   }),
@@ -51,10 +76,21 @@ export default {
   },
   methods: {
     getData: function() {
+      let tid = this.$route.params.team;
+      // Group Info
+      fetch('/api/group/v1/select/'+tid,{
+        method: 'GET',
+        headers: HeadersWithAuth({})
+      }).then(res => res.json())
+      .then(data => {
+        this.team = data[0];
+        console.log(data);
+      });
       let gid = this.$route.params.app;
       // Application Info
       fetch('/api/application/v1/select/'+gid,{
-        method: 'GET'
+        method: 'GET',
+        headers: HeadersWithAuth({})
       }).then(res => res.json())
       .then(data => {
         this.application = data[0];
@@ -75,6 +111,7 @@ export default {
         fetch('/api/application/v1/delete/environment', {
           method: 'POST',
           headers: {
+            'Authorization': 'Bearer '+getToken(),
             'Content-Type': 'application/json'
           },
           body: JSON.stringify(environment)
@@ -86,12 +123,14 @@ export default {
       fetch('/api/application/v1/save', {
         method: 'POST',
         headers: {
+          'Authorization': 'Bearer '+getToken(),
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(this.application)
       }).then(res => res.json())
       .then(data => {
         console.log(data);
+        this.needSave = false;
         this.application = data;
       });
     },
@@ -100,6 +139,7 @@ export default {
       fetch('/api/endpoint/v1/add', {
         method: 'POST',
         headers: {
+          'Authorization': 'Bearer '+getToken(),
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(endpoint)
@@ -110,7 +150,7 @@ export default {
       this.closePopover();
     },
     chooseEndpoint: function(id) {
-      this.$router.push('/versions/'+id);
+      this.$router.push('/edit/'+this.$route.params.team+'/'+this.$route.params.app+'/'+id);
     }
   },
   computed: {
@@ -126,6 +166,9 @@ export default {
         return this.application.applicationEnvironments.sort(compare);
       }
     },
+    getTeamLink: function() {
+      return "/edit/"+this.$route.params.team;
+    }
   },
 
 }

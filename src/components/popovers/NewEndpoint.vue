@@ -2,17 +2,17 @@
   <div class="popover-container">
     <div class="popover-background" @click="close"></div>
     <div class="new-team-container">
-      <h1>New Endpoint</h1>
+      <h1><v-icon size="30">mdi-check-network</v-icon> New Endpoint</h1>
       <div style="height:30px;"></div>
-      <h3>Endpoint Name:</h3>
-      <input class="ad-input"
+      <v-text-field outlined
+                    label="Endpoint Name"
              v-model="endpoint.endpointName">
-      </input>
-      <h3>Endpoint Description:</h3>
-      <textarea class="ad-input-textarea"
-             v-model="endpoint.endpointDescription">
-      </textarea>
-      <button class="ad-button" @click="addEndpoint(endpoint)">Add Endpoint</button>
+      </v-text-field>
+      <v-textarea outlined
+                label="Endpoint Description"
+                v-model="endpoint.endpointDescription">
+      </v-textarea>
+      <v-btn color="success" @click="addEndpoint(endpoint)">Add Endpoint</v-btn>
     </div>
   </div>
 </template>
@@ -45,7 +45,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
-  background: #f2f2f2;
+  background: #ffffff;
   border-radius: 3px;
   z-index: 101;
 }

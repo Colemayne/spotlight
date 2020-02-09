@@ -1,16 +1,24 @@
 <template>
   <div class="ad-container">
-    <div class="ad-card" style="padding:10px 40px;">
-      <h2 class="heading-text">Documentation</h2>
-      <p>Please select a team to view documentation for.</p>
-      <div class="grid-table">
-        <button class="ad-button" v-for="group in groups" @click="chooseTeam(group.id)">{{ group.groupName }}</button>
+    <div class="ad-card" style="padding:20px 40px;">
+      <div class="n-content-container">
+        <div class="row-end-button" style="grid-template-columns: auto 100px">
+          <h2 class="heading-text">Select A Team.</h2>
+        </div>
+        <p>Select a team to view their applications.</p>
+        <button class="n-row-button" v-for="group in groups" @click="chooseTeam(group.id)">
+          <div class="team-button-layout">
+            <v-icon color="black">mdi-account-group</v-icon>
+            <p style="margin-top:15px;">{{group.groupName}}</p>
+          </div>
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { HeadersWithAuth } from '@/main.js'
 export default {
   data:() => ({
     groups: [],
@@ -21,11 +29,11 @@ export default {
   methods: {
     getData: function() {
       fetch('/api/group/v1/select',{
-        method: 'GET'
+        method: 'GET',
+        headers: HeadersWithAuth({})
       }).then(res => res.json())
       .then(data => {
         this.groups = data;
-        console.log(data);
       });
     },
     chooseTeam: function(id) {

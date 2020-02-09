@@ -34,7 +34,7 @@ export default new Router({
       component: Endpoints,
     },
     {
-      path: '/versions/:endpoint',
+      path: '/edit/:team/:app/:endpoint',
       name: 'chooseVersion',
       component: EndpointVersion,
     },

@@ -1,13 +1,19 @@
 <template>
   <div class="nav-container">
-    <div class="spotlight-logo"></div>
-    <router-link v-for="button in buttons" class="ad-menu-button" :to="button.to" tag="button" :key="button.name">
-      {{ button.name }}
-    </router-link>
+    <v-icon color="white">mdi-train</v-icon>
+    <span>
+      <router-link v-for="button in buttons" class="n-menu-button" style="color:white" :to="button.to" tag="button" :key="button.name">
+        {{ button.name }}
+      </router-link>
+    </span>
+    <button class="n-menu-button" style="color:white">{{ getName() }}</button>
+    <button class="n-menu-button" style="color:white" @click="logoutApp">Logout</button>
   </div>
 </template>
 
 <script>
+import { logout } from '@/main.js'
+import { getUsername } from '@/main.js'
 export default {
   data: () => ({
     buttons: [
@@ -16,7 +22,7 @@ export default {
         to: "/"
       },
       {
-        name: "Edit",
+        name: "Teams",
         to: "/edit"
       },
       {
@@ -25,6 +31,14 @@ export default {
       }
     ],
   }),
+  methods: {
+    getName: function() {
+      return getUsername();
+    },
+    logoutApp: function() {
+      logout();
+    }
+  }
 
 }
 </script>
@@ -40,21 +54,13 @@ export default {
   top: 0;
   left: 0;
   background: #000000;
-  background: linear-gradient(125deg, #ffffff, #ededed, #f5f5f5);
+  background: #ffffff;
+  background: #0068c9;
   box-shadow: 0 1px 4px 0 rgba(0,0,0,.25);
   color: black;
   display: grid;
   grid-gap: 10px;
-  grid-template-columns: 75px 200px 200px 200px auto;
+  grid-template-columns: 75px auto 150px 150px;
   grid-template-rows: 100%;
-}
-.th-icon {
-  height: 100%;
-  width: 100%;
-}
-.spotlight-logo {
-  height: 100%;
-  background: url('../../assets/spotlightLogo2.svg');
-  background-repeat: no-repeat;
 }
 </style>
