@@ -15,25 +15,31 @@
           <v-btn color="primary" @click="newApplication=true">Create</v-btn>
         </div>
         <p>Applications contain documentation and endpoints.</p>
-        <button class="n-row-button" v-for="application in applications" @click="chooseApplication(application.id)">
-          <div class="application-button-layout">
-            <v-icon color="black">mdi-application</v-icon>
-            <p style="margin-top:15px;">{{application.applicationName}}</p>
-            <p class="truncate" style="margin-top:15px;">{{application.applicationDescription}}</p>
-            <div />
-            <span style="padding-top:5px;text-align:right">
-              <v-chip class="ma-2" color="grey" text-color="white">
-                    {{application.applicationPort}}
-              </v-chip>
-              <v-chip class="ma-2" color="grey" text-color="white">
-                    {{application.applicationEnvironments.length}}
-              </v-chip>
-              <v-chip class="ma-2" color="grey" text-color="white">
-                    {{application.endpoints.length}}
-              </v-chip>
-            </span>
-          </div>
-        </button>
+        <v-simple-table>
+          <thead>
+            <tr>
+              <th class="text-left" style="width:50px;"></th>
+              <th class="text-left">Application Name</th>
+              <th class="text-left">Description</th>
+              <th class="text-left">Port</th>
+              <th class="text-left">Environments</th>
+              <th class="text-left">Endpoints</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="application in applications" class="n-row-button" style="margin-bottom:10px;" @click="chooseApplication(application.id)">
+              <td><v-icon color="black">mdi-application</v-icon></td>
+              <td><p style="margin-top:15px;">{{application.applicationName}}</p></td>
+              <td><p class="truncate" style="margin-top:15px;">{{application.applicationDescription}}</p></td>
+              <td>
+                <p v-if="application.applicationPort" style="margin-top:15px;">{{application.applicationPort}}</p>
+                <p v-else style="margin-top:15px;">N/A</p>
+              </td>
+              <td><p style="margin-top:15px;">{{application.applicationEnvironments.length}}</p></td>
+              <td><p style="margin-top:15px;">{{application.endpoints.length}}</p></td>
+            </tr>
+          </tbody>
+        </v-simple-table>
       </div>
       <div class="n-content-container">
         <h2>Users</h2>

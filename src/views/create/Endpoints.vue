@@ -12,15 +12,22 @@
       </div>
 
       <div class="n-content-container">
-        <div class="row-end-button" style="grid-template-columns: auto 100px 100px;grid-gap:8px;">
-          <h2 class="heading-text">{{ application.applicationName }}</h2>
+        <div class="row-end-button" style="grid-template-columns: 400px auto 100px 100px;grid-gap:8px;">
+          <span>
+            <h3 style="margin-top:-10px;">Name</h3>
+            <v-text-field solo  @input="needSave=true" v-model="application.applicationName"/>
+          </span>
+          <span>
+            <h3 style="margin-top:-10px;">Port</h3>
+            <v-text-field label="Port" @input="needSave=true" solo style="width:150px;" v-model="application.applicationPort" />
+          </span>
           <v-btn v-if="needSave"color="primary" @click="saveApplication">Save</v-btn>
           <v-btn v-else disabled color="primary" @click="saveApplication">Save</v-btn>
           <v-btn color="primary" @click="addEnvironment">Create</v-btn>
         </div>
-        <p>{{ application.applicationDescription }}</p>
-        <v-text-field label="Port" @input="needSave=true" solo style="width:150px;" v-model="application.applicationPort" />
-        <h3>Environments</h3>
+        <h3 style="margin-top:-10px;">Description</h3>
+        <v-textarea solo v-model="application.applicationDescription" />
+        <h3 style="margin-top:-10px;">Environments</h3>
         <div class="grid-environment" v-if="application.applicationEnvironments.length > 0" v-for="(environment,index) in sortedEnvironments">
           <v-text-field @input="needSave=true" solo label="Name" v-model="environment.environmentName" />
           <v-btn style="height:50px;" v-if="environment.environmentProxy === 1" @click="environment.environmentProxy = 0; needSave = true">Proxy</v-btn>
@@ -38,14 +45,41 @@
           <v-btn color="primary" @click="newEndpoint=true">Create</v-btn>
         </div>
         <p>Define the endpoints for this application.</p>
-        <button class="n-row-button" v-for="endpoint in endpoints" @click="chooseEndpoint(endpoint.id)">
+        <v-simple-table>
+          <thead>
+            <tr>
+              <th class="text-left" style="width:50px;"></th>
+              <th class="text-left">Name</th>
+              <th class="text-left">Endpoint</th>
+              <th class="text-left" style="width:100px;">Authentication</th>
+              <th class="text-left" style="width:100px;">Method</th>
+              <th class="text-left" style="width:100px;">Headers</th>
+              <th class="text-left" style="width:100px;">Parameters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="n-row-button" v-for="endpoint in endpoints" @click="chooseEndpoint(endpoint.id)">
+              <td><v-icon size="30">mdi-check-network</v-icon></td>
+              <td><p style="margin-top:15px;">{{endpoint.endpointName}}</p></td>
+              <td><p style="margin-top:15px;" v-if="endpoint.endpointLocation" >{{endpoint.endpointLocation}}</p></td>
+              <td style="text-align:center">
+                <v-icon v-if="endpoint.endpointAuthRequired === 1" color="success" size="30">mdi-lock</v-icon>
+                <v-icon v-else color="error" size="30">mdi-lock-open</v-icon>
+              </td>
+              <td><p style="margin-top:15px;" v-if="endpoint.endpointMethod" >{{endpoint.endpointMethod}}</p></td>
+              <td><p style="margin-top:15px;" v-if="endpoint.endpointMethod" >{{endpoint.endpointHeaders.length}}</p></td>
+              <td><p style="margin-top:15px;" v-if="endpoint.endpointMethod" >{{endpoint.endpointParameters.length}}</p></td>
+            </tr>
+          </tbody>
+        </v-simple-table>
+        <!--<button class="n-row-button" v-for="endpoint in endpoints" @click="chooseEndpoint(endpoint.id)">
           <div class="application-button-layout" style="grid-template-columns: 75px 150px 150px auto">
             <v-icon size="30">mdi-check-network</v-icon>
             <p style="margin-top:15px;">{{endpoint.endpointName}}</p>
             <p style="margin-top:15px;" v-if="endpoint.endpointMethod" >{{endpoint.endpointMethod}}</p>
             <p style="margin-top:15px;" v-if="endpoint.endpointLocation" >{{endpoint.endpointLocation}}</p>
           </div>
-        </button>
+        </button>-->
       </div>
 
     </div>
